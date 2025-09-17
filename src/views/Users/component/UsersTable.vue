@@ -7,29 +7,33 @@
             <tr>
               <th class="text-uppercase text-center">Id</th>
               <th class="text-uppercase text-center">Name</th>
-              <th class="text-uppercase text-center">email</th>
-              <th class="text-uppercase text-center">role</th>
+              <th class="text-uppercase text-center">Email</th>
+              <th class="text-uppercase text-center">Role</th>
               <th class="text-uppercase text-center">Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in products" :key="index">
-              <td class="pa-5 text-center">{{ item.Id }}</td>
-              <td class="pa-5 text-center">{{ item.Name }}</td>
-              <td class="pa-5 text-center">{{ item.Email }}</td>
-              <td class="pa-5 text-center">{{ item.Role }}</td>
-
-              <td class="pa-5 text-center">
-                <v-btn icon size="small" color="transparent" flat class="rounded-xl"
-                  ><RouterLink to="users/edit"
-                    ><v-icon small class="text-warning">mdi-pencil</v-icon></RouterLink
-                  ></v-btn
+            <tr v-for="item in items" :key="item.id">
+              <td class="text-center">{{ item.id }}</td>
+              <td class="text-center">{{ item.name }}</td>
+              <td class="text-center">{{ item.email }}</td>
+              <td class="text-center">{{ item.rolelabel || 'N/A' }}</td>
+              <td class="text-center">
+                <RouterLink :to="`/admin/users/edit/${item.id}`" class="mr-2">
+                  <v-btn icon size="small" flat class="rounded-xl">
+                    <v-icon small class="text-primary">mdi-pencil</v-icon>
+                  </v-btn>
+                </RouterLink>
+                <v-btn
+                  icon
+                  size="small"
+                  flat
+                  class="rounded-xl"
+                  :disabled="loading"
+                  @click="() => onDelete(item.id)"
                 >
-                <v-btn icon size="small" color="transparent" flat class="rounded-xl"
-                  ><RouterLink>
-                    <v-icon small class="text-error">mdi-delete</v-icon></RouterLink
-                  ></v-btn
-                >
+                  <v-icon small class="text-error">mdi-delete</v-icon>
+                </v-btn>
               </td>
             </tr>
           </tbody>
@@ -40,35 +44,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
-const products = ref([
-  {
-    Id: 1,
-    Name: 'Joseph',
-    Email: 'jlquinte1901@gmail.com',
-    Role: 'super admin',
-  },
-  {
-    Id: 2,
-    Name: 'Lucilo',
-    Email: 'lucilo@gmail.com',
-    Role: 'admin',
-  },
-  {
-    Id: 3,
-    Name: 'Quinte',
-    Email: 'quinte@gmail.com',
-    Role: 'admin',
-  },
-  {
-    Id: 4,
-    Name: 'Espa',
-    Email: 'espa@gmail.com',
-    Role: 'user',
-  },
-  // Add more products as needed
-])
+defineProps({
+  items: { type: Array, required: true },
+  loading: { type: Boolean, default: false },
+  onDelete: { type: Function, required: true },
+})
 </script>
 
 <style scoped>

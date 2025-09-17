@@ -14,19 +14,6 @@
           />
         </v-col>
 
-        <!-- Month -->
-        <v-col cols="12" md="2">
-          <v-select
-            v-model="filters.month"
-            :items="months"
-            label="Month"
-            density="comfortable"
-            variant="outlined"
-            hide-details
-            clearable
-          />
-        </v-col>
-
         <!-- Status -->
         <v-col cols="12" md="2">
           <v-select
@@ -53,23 +40,19 @@
           />
         </v-col>
 
-        <!-- Region / LGU -->
+        <!-- Contract / Admin -->
         <v-col cols="12" md="3">
           <v-select
-            v-model="filters.region"
-            :items="regions"
-            label="Region / LGU"
+            v-model="filters.choices"
+            :items="choices"
+            label="Contract / Admin"
             density="comfortable"
             variant="outlined"
             hide-details
             clearable
           />
         </v-col>
-      </v-row>
-
-      <!-- Action buttons -->
-      <v-row dense class="mt-3">
-        <v-col>
+        <v-col class="d-flex align-center ml-3">
           <v-btn size="small" color="primary" @click="applyFilters" class="mr-2">Apply</v-btn>
           <v-btn size="small" variant="outlined" color="grey" @click="resetFilters">Reset</v-btn>
         </v-col>
@@ -84,7 +67,6 @@ import { ref } from 'vue'
 // Filters state
 const filters = ref({
   year: null,
-  month: null,
   status: null,
   category: null,
   region: null,
@@ -92,23 +74,9 @@ const filters = ref({
 
 // Dropdown data
 const years = [2024, 2025, 2026]
-const months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-]
 const statuses = ['Ongoing', 'Completed', 'Terminated']
 const categories = ['Road', 'Bridge', 'School', 'Hospital', 'Housing']
-const regions = ['Region I', 'Region II', 'Region III', 'NCR', 'LGU A', 'LGU B']
+const choices = ['Contract', 'Admin']
 
 // Methods
 const applyFilters = () => {

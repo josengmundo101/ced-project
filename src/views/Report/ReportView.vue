@@ -62,7 +62,7 @@ import DataTable from './component/DataTable.vue'
 
     <v-row class="mt-6" dense>
       <v-col cols="12">
-        <v-card class="pa-4 border-sm" style="min-height: 220px; height: 100%">
+        <v-card class="pa-4 border-sm" flat style="min-height: 220px; height: 100%">
           <GraphChart />
         </v-card>
       </v-col>
