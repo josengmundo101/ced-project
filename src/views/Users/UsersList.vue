@@ -6,6 +6,7 @@ import SearchBar from '@/components/SearchBar.vue'
 import UsersTable from './component/UsersTable.vue'
 import ConfirmDialog from '@/components/UI/ConfirmDialog.vue'
 import { useUsers } from '@/components/composable/useUser'
+import TableLoader from '@/components/UI/TableLoader.vue'
 
 const { users, loading, error, fetchUsers, deleteUser } = useUsers()
 
@@ -85,7 +86,9 @@ const confirmDelete = async () => {
     </v-row>
 
     <div class="mb-5">
-      <UsersTable :items="users" :loading="loading" :onDelete="handleDelete" />
+      <TableLoader :loading="loading" :rows="6">
+        <UsersTable :items="users" :loading="loading" :onDelete="handleDelete" />
+      </TableLoader>
     </div>
 
     <ConfirmDialog

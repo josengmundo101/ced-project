@@ -17,7 +17,7 @@
               <td class="text-center">{{ item.id }}</td>
               <td class="text-center">{{ item.name }}</td>
               <td class="text-center">{{ item.email }}</td>
-              <td class="text-center">{{ item.rolelabel || 'N/A' }}</td>
+              <td class="text-center">{{ item.rolelabel }}</td>
               <td class="text-center">
                 <RouterLink :to="`/admin/users/edit/${item.id}`" class="mr-2">
                   <v-btn icon size="small" flat class="rounded-xl">
@@ -75,5 +75,6 @@ defineProps({
 
 .custom-table td {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 10px !important;
 }
 </style>

@@ -21,7 +21,13 @@ export function useUsers() {
     console.log('[useUsers] Fetching users...')
     try {
       const res = await api.get('/users') // 👈 uses api.js
-      users.value = res.data
+      users.value = res.data.map((user) => {
+        const role = roles.value.find((r) => r.id === user.role_id)
+        return {
+          ...user,
+          rolelabel: role ? role.label : 'N/A',
+        }
+      })
       console.log('[useUsers] Users fetched:', res.data)
       showSnackbar('Users loaded successfully')
     } catch (err) {

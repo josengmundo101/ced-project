@@ -25,22 +25,19 @@ import UsersForm from '@/components/common/UsersForm.vue'
 import { useUsers } from '@/components/composable/useUser'
 
 const router = useRouter()
-const { createUser, roles } = useUsers()
+const { createUser, roles, snackbar } = useUsers()
 
 const loading = ref(false)
 const errors = ref({})
-const snackbar = ref({ show: false, message: '', color: 'success' })
 
 async function addUser(user) {
   loading.value = true
   errors.value = {}
   try {
     await createUser(user)
-    snackbar.value = { show: true, message: 'User created successfully!', color: 'success' }
     setTimeout(() => router.push({ name: 'users' }), 1000)
   } catch (err) {
     errors.value = err.response?.data?.errors || {}
-    snackbar.value = { show: true, message: 'Failed to create user', color: 'error' }
   } finally {
     loading.value = false
   }

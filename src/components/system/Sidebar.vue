@@ -1,5 +1,19 @@
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
+import { useAuth } from '../composable/useAuth'
+import ConfirmDialog from '../UI/ConfirmDialog.vue'
+import router from '@/router'
+
+const { currentUser, logout, fetchCurrentUser } = useAuth()
+
+onMounted(() => {
+  fetchCurrentUser()
+})
+
+// --- Logout confirmation ---
+const dialog = ref(false)
+const snackbar = ref({ show: false, message: '', color: 'success' })
+const loading = ref(false)
 
 const props = defineProps({
   drawer: Boolean,
@@ -20,7 +34,6 @@ const roleMap = {
 }
 const roleName = computed(() => roleMap[props.role] || 'guest')
 
-// Base menu items without prefixes
 const menuItems = [
   { title: 'Dashboard', icon: 'mdi-view-dashboard', path: 'dashboard', roles: ['admin', 'user'] },
   { title: 'Projects', icon: 'mdi-folder', path: 'projects', roles: ['admin', 'user'] },
@@ -29,10 +42,8 @@ const menuItems = [
   { title: 'Settings', icon: 'mdi-cog', path: 'settings', roles: ['admin', 'user'] },
 ]
 
-// Add prefix (/admin or /user) dynamically
 const filteredMenuItems = computed(() => {
   if (roleName.value === 'guest') return []
-
   const prefix = roleName.value === 'admin' ? '/admin' : '/user'
   return menuItems
     .filter((item) => item.roles.includes(roleName.value))
@@ -41,6 +52,26 @@ const filteredMenuItems = computed(() => {
       to: `${prefix}/${item.path}`,
     }))
 })
+// Handle logout click
+function openLogoutDialog() {
+  dialog.value = true
+}
+
+async function confirmLogout() {
+  loading.value = true
+  try {
+    await logout()
+    console.log('✅ Logged out successfully')
+    snackbar.value = { show: true, message: 'Logged out successfully', color: 'success' }
+    router.push({ path: '/' })
+  } catch (err) {
+    snackbar.value = { show: true, message: 'Logout failed', color: 'error' }
+    console.error('❌ Logout error:', err)
+  } finally {
+    loading.value = false
+    dialog.value = false
+  }
+}
 </script>
 
 <template>
@@ -50,7 +81,9 @@ const filteredMenuItems = computed(() => {
       <v-avatar size="40">
         <v-img src="https://i.pravatar.cc/300" alt="User Avatar" />
       </v-avatar>
-      <span class="ml-5 font-weight-bold text-subtitle-1"> {{ roleName.toUpperCase() }} User </span>
+      <span class="ml-5 font-weight-bold text-subtitle-1">
+        {{ currentUser?.name || 'Loading...' }}
+      </span>
     </div>
 
     <v-divider />
@@ -71,8 +104,20 @@ const filteredMenuItems = computed(() => {
     <v-divider />
 
     <!-- Logout -->
-    <v-list>
-      <v-list-item to="/" prepend-icon="mdi-logout"> Logout </v-list-item>
-    </v-list>
+    <v-list-item link prepend-icon="mdi-logout" @click="openLogoutDialog"> Logout </v-list-item>
+
+    <ConfirmDialog
+      :dialog="dialog"
+      @update:dialog="dialog = $event"
+      title="Confirm logout"
+      message="Are you sure you want to Logout this user?"
+      confirm-text="Yes"
+      cancel-text="No"
+      confirm-color="error"
+      :loading="loading"
+      :snackbar="snackbar"
+      @update:snackbar="snackbar = $event"
+      @confirm="confirmLogout"
+    />
   </v-navigation-drawer>
 </template>

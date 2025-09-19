@@ -1,15 +1,16 @@
 <template>
-  <div>
-    <UsersForm
-      v-if="user"
-      :modelValue="user"
-      :roles="roles"
-      :isEdit="true"
-      :loading="loading"
-      :errors="errors"
-      @submit="updateUser"
-    />
-
+  <v-responsive>
+    <TableLoader :loading="loading" :rows="6">
+      <UsersForm
+        v-if="user"
+        :modelValue="user"
+        :roles="roles"
+        :isEdit="true"
+        :loading="loading"
+        :errors="errors"
+        @submit="updateUser"
+      />
+    </TableLoader>
     <!-- Snackbar -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="3000">
       {{ snackbar.message }}
@@ -17,7 +18,7 @@
         <v-btn text @click="snackbar.show = false">Close</v-btn>
       </template>
     </v-snackbar>
-  </div>
+  </v-responsive>
 </template>
 
 <script setup>
@@ -25,13 +26,13 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import UsersForm from '@/components/common/UsersForm.vue'
 import { useUsers } from '@/components/composable/useUser'
+import TableLoader from '@/components/UI/TableLoader.vue'
 
 const route = useRoute()
 const router = useRouter()
 
-const { getUser, updateUser: apiUpdateUser, roles } = useUsers()
+const { getUser, loading, updateUser: apiUpdateUser, roles } = useUsers()
 const user = ref(null)
-const loading = ref(false)
 const errors = ref({})
 const snackbar = ref({ show: false, message: '', color: 'success' })
 

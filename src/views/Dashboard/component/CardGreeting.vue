@@ -9,7 +9,7 @@
       <v-col cols="9">
         <v-card-title class="text-h5 mb-2">
           Welcome to Dashboard,
-          <span class="title">Super Admin!</span>
+          <span class="title">{{ currentUser?.name || 'Guest' }}!</span>
         </v-card-title>
         <v-card-text class="text-body-1">
           Here is a quick overview of your project statistics. Stay updated with the latest
@@ -24,7 +24,15 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import logo from '@/assets/cgb-logo.png'
+import { useAuth } from '@/components/composable/useAuth'
+
+const { currentUser, fetchCurrentUser } = useAuth()
+
+onMounted(() => {
+  fetchCurrentUser()
+})
 </script>
 
 <style scoped>

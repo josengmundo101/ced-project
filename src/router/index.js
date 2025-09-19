@@ -29,11 +29,17 @@ const routes = [
 
       // restricted to admin
       { path: 'projects/add', name: 'project-add', component: AddProject },
-      { path: 'projects/edit', name: 'project-edit', component: EditProject },
+      {
+        path: 'projects/edit/:id',
+        name: 'projects-edit',
+        component: EditProject,
+        props: true,
+      },
+
       { path: 'users', name: 'users', component: UsersList },
       { path: 'users/add', name: 'users-add', component: AddUser },
       {
-        path: '/admin/users/edit/:id',
+        path: 'users/edit/:id',
         name: 'users-edit',
         component: EditUser,
         props: true,
@@ -57,6 +63,43 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+})
+
+/**
+ * 🔒 Global Navigation Guard
+ */
+router.beforeEach((to, _from, next) => {
+  const token = localStorage.getItem('token')
+  const user = JSON.parse(localStorage.getItem('user'))
+
+  // If route requires authentication
+  if (to.meta.requiresAuth) {
+    if (!token || !user) {
+      return next({ name: 'login' }) // not logged in → back to login
+    }
+
+    // Role check
+    if (to.meta.role && user.role_id) {
+      const roleMap = {
+        1: 'admin',
+        2: 'user',
+      }
+
+      const userRole = roleMap[user.role_id]
+
+      if (to.meta.role !== userRole) {
+        return next({ name: 'login' }) // 🚫 unauthorized → redirect
+      }
+    }
+  }
+
+  // If already logged in and trying to access login → redirect to their dashboard
+  if (to.name === 'login' && token && user) {
+    if (user.role_id === 1) return next({ name: 'admin-dashboard' })
+    if (user.role_id === 2) return next({ name: 'user-dashboard' })
+  }
+
+  next()
 })
 
 export default router
