@@ -20,7 +20,7 @@ export function useUsers() {
     loading.value = true
     console.log('[useUsers] Fetching users...')
     try {
-      const res = await api.get('/users') // 👈 uses api.js
+      const res = await api.get('/users')
       users.value = res.data.map((user) => {
         const role = roles.value.find((r) => r.id === user.role_id)
         return {

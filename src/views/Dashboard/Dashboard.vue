@@ -1,8 +1,9 @@
 <script setup>
 import CardBox from '../../components/common/CardBox.vue'
 import CardGreeting from './component/CardGreeting.vue'
-import RecentProject from './component/RecentProject.vue'
+// import RecentProject from '../../components/common/RecentProject.vue'
 import GraphChart from '../../components/common/GraphChart.vue'
+import DataTable from '@/components/common/DataTable.vue'
 </script>
 
 <template>
@@ -54,7 +55,7 @@ import GraphChart from '../../components/common/GraphChart.vue'
     <!-- Middle Section: Recent Project + Donut Chart -->
     <v-row class="mt-6" dense>
       <v-col cols="12" md="6">
-        <RecentProject />
+        <DataTable />
       </v-col>
       <v-col cols="12" md="6">
         <v-card

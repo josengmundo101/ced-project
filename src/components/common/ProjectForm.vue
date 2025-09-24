@@ -1,57 +1,36 @@
 <template>
   <v-responsive class="pa-10">
     <v-card class="pa-6 rounded-lg elevation-2">
-      <!-- Header -->
       <div class="d-flex justify-space-between align-center mb-4">
         <v-card-title class="text-h5 font-weight-bold">
           {{ isEdit ? 'Edit Project' : 'Add New Project' }}
         </v-card-title>
 
-        <RouterLink to="/admin/projects" class="text-decoration-none">
-          <v-btn rounded flat>
-            <v-icon icon="mdi-arrow-left" start></v-icon>
-            Back to Project List
-          </v-btn>
-        </RouterLink>
+        <v-btn rounded flat>
+          <RouterLink to="/admin/projects" class="text-decoration-none text-black"
+            ><v-icon icon="mdi-arrow-left" start></v-icon> Back to Project List
+          </RouterLink>
+        </v-btn>
       </div>
 
-      <v-divider />
+      <v-divider></v-divider>
 
-      <!-- Form -->
       <v-form @submit.prevent="handleSubmit">
         <v-row>
           <v-col cols="12" md="6">
-            <v-text-field
-              v-model="form.project_id"
-              label="Project ID"
-              :error-messages="errors.project_id"
-              required
-            />
+            <v-text-field v-model="form.project_id" label="Project ID" required />
           </v-col>
 
           <v-col cols="12" md="6">
-            <v-text-field
-              v-model="form.contract_id"
-              label="Contract ID"
-              :error-messages="errors.contract_id"
-            />
+            <v-text-field v-model="form.contract_id" label="Contract ID" />
           </v-col>
 
           <v-col cols="12" md="6">
-            <v-text-field
-              v-model="form.project_name"
-              label="Project Name"
-              :error-messages="errors.project_name"
-              required
-            />
+            <v-text-field v-model="form.project_name" label="Project Name" required />
           </v-col>
 
           <v-col cols="12" md="6">
-            <v-text-field
-              v-model="form.category"
-              label="Category"
-              :error-messages="errors.category"
-            />
+            <v-text-field v-model="form.category" label="Category" />
           </v-col>
 
           <v-col cols="12" md="6">
@@ -59,7 +38,6 @@
               v-model="form.status"
               :items="['ongoing', 'completed', 'terminated']"
               label="Status"
-              :error-messages="errors.status"
               required
             />
           </v-col>
@@ -126,26 +104,53 @@
 
           <v-col cols="12" md="6">
             <v-file-input
-              v-model="form.image"
-              label="Project Image"
+              label="Project Images"
               accept="image/*"
+              multiple
               clearable
               chips
+              prepend-icon="mdi-image-multiple"
+              :model-value="form.image"
+              @update:model-value="
+                (newFiles) => {
+                  // Merge new + old
+                  const allFiles = [...form.image, ...newFiles]
+
+                  // Deduplicate by name+size
+                  form.image = allFiles.filter(
+                    (file, index, self) =>
+                      index === self.findIndex((f) => f.name === file.name && f.size === file.size),
+                  )
+                }
+              "
             />
           </v-col>
 
           <v-col cols="12">
             <v-file-input
-              v-model="form.document"
-              label="Project Document"
+              label="Project Documents"
               accept=".pdf,.doc,.docx,.xlsx"
+              multiple
               clearable
               chips
+              prepend-icon="mdi-file-document-multiple"
+              :model-value="form.document"
+              @update:model-value="
+                (newFiles) => {
+                  const allFiles = [...form.document, ...newFiles]
+
+                  // Deduplicate by name+size
+                  form.document = allFiles.filter(
+                    (file, index, self) =>
+                      index === self.findIndex((f) => f.name === file.name && f.size === file.size),
+                  )
+                }
+              "
             />
           </v-col>
 
           <v-col cols="12">
-            <v-btn type="submit" color="primary" variant="tonal" rounded :loading="loading">
+            <v-btn type="submit" color="primary" variant="tonal" rounded>
               {{ isEdit ? 'Update Project' : 'Add Project' }}
             </v-btn>
           </v-col>
@@ -156,7 +161,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
   modelValue: { type: Object, default: () => ({}) },
@@ -167,17 +172,46 @@ const props = defineProps({
 
 const emit = defineEmits(['submit'])
 
-// form state
-const form = ref({})
+// initialize form with arrays for multiple files
+const form = ref({
+  project_id: '',
+  contract_id: '',
+  project_name: '',
+  category: '',
+  region: '',
+  lgu: '',
+  department: '',
+  implementing_office: '',
+  fund_source: '',
+  implementation_type: '',
+  contractor: '',
+  project_engineer: '',
+  year_implemented: null,
+  amount: null,
+  revised_amount: null,
+  location: '',
+  start_date: '',
+  end_date: '',
+  status: 'ongoing',
+  image: [],
+  document: [],
+  ...props.modelValue,
+})
 
-// ensure form updates when parent passes data (important for async fetch)
+// Watch for changes when editing (important for async loaded project)
 watch(
   () => props.modelValue,
   (newVal) => {
-    form.value = { ...newVal }
+    form.value = {
+      image: [],
+      document: [],
+      ...newVal,
+    }
   },
-  { immediate: true, deep: true },
+  { immediate: true },
 )
+
+const isEdit = computed(() => props.mode === 'edit')
 
 function handleSubmit() {
   emit('submit', form.value)

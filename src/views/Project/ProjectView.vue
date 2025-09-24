@@ -98,4 +98,3 @@ const confirmDelete = async () => {
     />
   </v-responsive>
 </template>
-<!-- <!-- :items="projects" :loading="loading" :onDelete="handleDelete" -->

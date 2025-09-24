@@ -19,7 +19,18 @@
               <td class="pa-5 text-center">{{ project.category }}</td>
               <td class="pa-5 text-center">{{ project.project_name }}</td>
               <td class="pa-5 text-center">{{ project.location }}</td>
-              <td class="pa-5 text-center">{{ project.status }}</td>
+              <td class="pa-5 text-center">
+                <v-chip
+                  :color="
+                    project.status === 'completed'
+                      ? 'green'
+                      : project.status === 'ongoing'
+                        ? 'blue'
+                        : 'red'
+                  "
+                  >{{ project.status }}</v-chip
+                >
+              </td>
 
               <td class="pa-5 text-center">
                 <!-- View -->

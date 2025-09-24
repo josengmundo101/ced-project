@@ -2,7 +2,16 @@
 import FilterBar from './component/FilterBar.vue'
 import CardBox from '@/components/common/CardBox.vue'
 import GraphChart from '@/components/common/GraphChart.vue'
-import DataTable from './component/DataTable.vue'
+import DataTable from '../../components/common/DataTable.vue'
+import TableLoader from '@/components/UI/TableLoader.vue'
+import { useProjects } from '@/components/composable/useProject'
+import { ref, onMounted } from 'vue'
+
+const { fetchProjects, projects, loading } = useProjects()
+
+onMounted(() => {
+  fetchProjects()
+})
 </script>
 
 <template>
@@ -24,7 +33,7 @@ import DataTable from './component/DataTable.vue'
           flat
           icon="mdi-file-chart"
           iconColor="blue"
-          count="120"
+          :count="projects.length"
           description="Total Project"
         />
       </v-col>
@@ -34,7 +43,7 @@ import DataTable from './component/DataTable.vue'
           flat
           icon="mdi-check-circle"
           iconColor="green"
-          count="20"
+          :count="projects.filter((p) => p.status === 'completed').length"
           description="Total Completed Project"
         />
       </v-col>
@@ -44,7 +53,7 @@ import DataTable from './component/DataTable.vue'
           flat
           icon="mdi-progress-check"
           iconColor="blue"
-          count="5"
+          :count="projects.filter((p) => p.status === 'ongoing').length"
           description="Total Ongoing Project"
         />
       </v-col>
@@ -54,7 +63,7 @@ import DataTable from './component/DataTable.vue'
           flat
           icon="mdi-cancel"
           iconColor="red"
-          count="3"
+          :count="projects.filter((p) => p.status === 'terminated').length"
           description="Total Terminated Project"
         />
       </v-col>
@@ -66,8 +75,15 @@ import DataTable from './component/DataTable.vue'
           <GraphChart />
         </v-card>
       </v-col>
+
       <v-col cols="12" class="mt-6">
-        <DataTable />
+        <TableLoader :loading="loading" :rows="6">
+          <DataTable
+            :projects="projects"
+            :columns="['name', 'category', 'status', 'date', 'action']"
+            title="Project Report"
+          />
+        </TableLoader>
       </v-col>
     </v-row>
   </v-responsive>

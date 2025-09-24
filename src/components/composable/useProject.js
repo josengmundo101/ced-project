@@ -1,9 +1,9 @@
-// src/composables/useProjects.js
 import { ref } from 'vue'
 import api from '@/utils/api'
 
 export function useProjects() {
   const projects = ref([])
+  const currentProject = ref(null)
   const error = ref(null)
   const loading = ref(false)
   const snackbar = ref({ show: false, message: '', color: 'success' })
@@ -18,7 +18,7 @@ export function useProjects() {
     console.log('[useProjects] Fetching projects...')
     try {
       const res = await api.get('/projects')
-      projects.value = res.data // 👈 actually store them
+      projects.value = res.data
       console.log('[useProjects] Projects fetched:', res.data)
       showSnackbar('Projects loaded successfully')
     } catch (err) {
@@ -37,7 +37,7 @@ export function useProjects() {
     try {
       const res = await api.get(`/projects/${id}`)
       console.log('[useProjects] Project fetched:', res.data)
-      return res.data // return the project data
+      return res.data
     } catch (err) {
       error.value = err.response?.data?.message || 'Failed to fetch project'
       console.error('[useProjects] Get error:', err)
@@ -48,17 +48,19 @@ export function useProjects() {
     }
   }
 
-  // ✅ Create new project (supports file upload)
+  // ✅ Create new project (supports multiple files)
   const createProject = async (payload) => {
     loading.value = true
     console.log('[useProjects] Creating project...', payload)
     try {
-      let formData
-      if (payload instanceof FormData) {
-        formData = payload
-      } else {
-        formData = new FormData()
-        for (const key in payload) {
+      let formData = new FormData()
+
+      for (const key in payload) {
+        if (Array.isArray(payload[key])) {
+          payload[key].forEach((file) => {
+            formData.append(`${key}[]`, file)
+          })
+        } else {
           formData.append(key, payload[key])
         }
       }
@@ -79,20 +81,22 @@ export function useProjects() {
     }
   }
 
-  // ✅ Update project
+  // ✅ Update project (supports multiple files)
   const updateProject = async (id, payload) => {
     loading.value = true
     console.log(`[useProjects] Updating project ID: ${id}`, payload)
     try {
-      let formData
-      if (payload instanceof FormData) {
-        formData = payload
-      } else {
-        formData = new FormData()
-        for (const key in payload) {
+      let formData = new FormData()
+
+      for (const key in payload) {
+        if (Array.isArray(payload[key])) {
+          payload[key].forEach((file) => {
+            formData.append(`${key}[]`, file)
+          })
+        } else {
           formData.append(key, payload[key])
         }
-      }
+      } // 👈 this was missing before
 
       const res = await api.post(`/projects/${id}?_method=PUT`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -129,9 +133,9 @@ export function useProjects() {
     }
   }
 
-  // ✅ Return everything to use in components
   return {
     projects,
+    currentProject,
     error,
     loading,
     snackbar,

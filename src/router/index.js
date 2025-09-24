@@ -9,6 +9,7 @@ import EditUser from '@/views/Users/component/EditUser.vue'
 import AddProject from '@/views/Project/component/AddProject.vue'
 import EditProject from '@/views/Project/component/EditProject.vue'
 import ReportView from '@/views/Report/ReportView.vue'
+import ViewProject from '@/views/Project/component/ViewProject.vue'
 
 const routes = [
   {
@@ -35,6 +36,7 @@ const routes = [
         component: EditProject,
         props: true,
       },
+      { path: 'projects/view/:id', name: 'projects-view', component: ViewProject, props: true },
 
       { path: 'users', name: 'users', component: UsersList },
       { path: 'users/add', name: 'users-add', component: AddUser },
