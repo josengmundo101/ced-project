@@ -66,7 +66,7 @@ const confirmDelete = async () => {
         <SearchBar v-model="searchQuery" placeholder="Search by Project..." />
       </v-col>
 
-      <v-col cols="12" sm="6" class="d-flex justify-end align-center">
+      <v-col cols="12" sm="6" class="d-flex justify-end align-center fade-in">
         <RouterLink to="projects/add"
           ><v-btn
             class="btn text-subtitle-1 font-weight-regular rounded-lg text-none"

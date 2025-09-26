@@ -13,7 +13,9 @@ const props = defineProps({
     type: Array,
     default: () => ['name', 'category', 'status', 'date'],
     validator: (cols) =>
-      cols.every((col) => ['name', 'category', 'status', 'date', 'action'].includes(col)),
+      cols.every((col) =>
+        ['name', 'category', 'status', 'implementation_type', 'date', 'action'].includes(col),
+      ),
   },
   title: {
     type: String,
@@ -26,6 +28,7 @@ const columnLabels = {
   name: 'Project Name',
   category: 'Category',
   status: 'Status',
+  implementation_type: 'Implementation Type',
   date: 'Date',
   action: 'Action',
 }
@@ -39,10 +42,6 @@ const statusColors = {
 
 // Emit for parent actions
 const emit = defineEmits(['view-project'])
-
-const viewProject = (project) => {
-  emit('view-project', project)
-}
 </script>
 
 <template>
@@ -79,6 +78,9 @@ const viewProject = (project) => {
               >
                 {{ project.status }}
               </v-chip>
+            </td>
+            <td v-if="columns.includes('implementation_type')" class="pa-5">
+              {{ project.implementation_type }}
             </td>
             <td v-if="columns.includes('date')" class="pa-5">
               {{ project.year_implemented }}

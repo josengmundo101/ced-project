@@ -7,25 +7,43 @@
 <script setup>
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js'
+import { computed } from 'vue'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement)
 
-const projectData = [8, 12, 3] // ongoing, completed, suspended
-const total = projectData.reduce((a, b) => a + b, 0)
+// Props: parent will pass stats + loading
+const props = defineProps({
+  stats: {
+    type: Object,
+    default: () => ({ ongoing: 0, completed: 0, terminated: 0 }),
+  },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+})
 
-const chartData = {
-  labels: ['Ongoing', 'Completed', 'Suspended'],
-  datasets: [
-    {
-      data: projectData,
-      backgroundColor: ['#42A5F5', '#66BB6A', '#EF5350'],
-      borderColor: '#fff',
-      borderWidth: 2,
-    },
-  ],
-}
+// Chart Data
+const chartData = computed(() => {
+  const values = [props.stats.ongoing, props.stats.completed, props.stats.terminated]
+  const total = values.reduce((a, b) => a + b, 0)
 
-const chartOptions = {
+  return {
+    labels: ['Ongoing', 'Completed', 'Suspended'],
+    datasets: [
+      {
+        data: values,
+        backgroundColor: ['#42A5F5', '#66BB6A', '#EF5350'],
+        borderColor: '#fff',
+        borderWidth: 2,
+      },
+    ],
+    total,
+  }
+})
+
+// Chart Options
+const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
@@ -39,7 +57,7 @@ const chartOptions = {
 
           return labels.map((label, i) => {
             const value = data[i]
-            const percentage = ((value / total) * 100).toFixed(1)
+            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0
             return {
               text: `${label}: ${percentage}% (${value})`,
               fillStyle: chart.data.datasets[0].backgroundColor[i],
@@ -52,13 +70,14 @@ const chartOptions = {
       callbacks: {
         label: (context) => {
           const value = context.raw
-          const percentage = ((value / total) * 100).toFixed(1)
+          const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0)
+          const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0
           return `${context.label}: ${value} (${percentage}%)`
         },
       },
     },
   },
-}
+}))
 </script>
 
 <style scoped>
