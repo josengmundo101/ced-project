@@ -11,7 +11,7 @@ const props = defineProps({
   // Default columns (can override from parent)
   columns: {
     type: Array,
-    default: () => ['name', 'category', 'status', 'date'],
+    default: () => ['name', 'category', 'status', 'implementation_type', 'date'],
     validator: (cols) =>
       cols.every((col) =>
         ['name', 'category', 'status', 'implementation_type', 'date', 'action'].includes(col),
@@ -21,7 +21,18 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  role: {
+    type: String,
+    required: true,
+  },
 })
+
+// dynamic view route based on role
+const viewPath = (id) => {
+  return props.role === 'admin'
+    ? { name: 'admin-projects-view', params: { id } }
+    : { name: 'user-projects-view', params: { id } }
+}
 
 // Column labels (human readable)
 const columnLabels = {
@@ -87,7 +98,7 @@ const emit = defineEmits(['view-project'])
             </td>
             <td v-if="columns.includes('action')" class="pa-5">
               <v-btn icon size="small" flat class="rounded-xl">
-                <RouterLink :to="`/admin/projects/view/${project.id}`">
+                <RouterLink :to="viewPath(project.id)">
                   <v-icon small class="text-blue">mdi-eye</v-icon>
                 </RouterLink>
               </v-btn>

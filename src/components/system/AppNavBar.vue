@@ -10,9 +10,7 @@ const emit = defineEmits(['update:drawer'])
 <template>
   <v-app-bar color="blue-lighten-1">
     <v-app-bar-nav-icon @click.stop="emit('update:drawer', !props.drawer)" class="ml-5" />
-    <img :src="logo" alt="" width="50" height="50" class="mx-2" />
+    <img :src="logo" alt="Logo" width="50" height="50" class="mx-2" />
     <p class="title text-h5 font-weight-bold">City Engineering Department</p>
   </v-app-bar>
 </template>
-
-<style scoped></style>

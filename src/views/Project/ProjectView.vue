@@ -6,8 +6,10 @@ import ProjectTable from './component/ProjectTable.vue'
 import ConfirmDialog from '@/components/UI/ConfirmDialog.vue'
 import TableLoader from '@/components/UI/TableLoader.vue'
 import { useProjects } from '@/components/composable/useProject.js'
+import { useAuth } from '@/components/composable/useAuth'
 
 const { projects, loading, error, fetchProjects, deleteProject } = useProjects()
+const { currentUser, fetchCurrentUser } = useAuth()
 
 const searchQuery = ref('')
 const snackbar = ref({ show: false, message: '', color: 'success' })
@@ -15,14 +17,17 @@ const dialog = ref(false)
 const deleteId = ref(null)
 const deleting = ref(false)
 
-// Fetch projects on mount
+// Fetch projects + user on mount
 onMounted(() => {
   fetchProjects()
+  if (!currentUser.value) {
+    fetchCurrentUser() // 👈 make sure we have the user loaded
+  }
 })
 
 // Handle delete (open dialog)
 const handleDelete = (id) => {
-  console.log('handleDelete called with ID:', id) // 👈 debug
+  console.log('handleDelete called with ID:', id)
   deleteId.value = id
   dialog.value = true
 }
@@ -67,19 +72,26 @@ const confirmDelete = async () => {
       </v-col>
 
       <v-col cols="12" sm="6" class="d-flex justify-end align-center fade-in">
-        <RouterLink to="projects/add"
-          ><v-btn
+        <RouterLink v-if="currentUser?.role_id === 1" to="projects/add">
+          <v-btn
             class="btn text-subtitle-1 font-weight-regular rounded-lg text-none"
             color="primary"
-            ><v-icon icon="mdi-file-plus" start></v-icon>Add Project</v-btn
-          ></RouterLink
-        >
+          >
+            <v-icon icon="mdi-file-plus" start></v-icon>
+            Add Project
+          </v-btn>
+        </RouterLink>
       </v-col>
     </v-row>
 
     <div class="mb-5">
       <TableLoader :loading="loading" :rows="6">
-        <ProjectTable :items="projects" :loading="loading" :onDelete="handleDelete" />
+        <ProjectTable
+          :items="projects"
+          :loading="loading"
+          :onDelete="handleDelete"
+          :role="currentUser?.role_id"
+        />
       </TableLoader>
     </div>
 

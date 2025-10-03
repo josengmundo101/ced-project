@@ -105,6 +105,26 @@ export function useUsers() {
       throw err
     }
   }
+
+  const changePassword = async (payload) => {
+    loading.value = true
+    console.log('[useUsers] Changing password...')
+    try {
+      const res = await api.post('/users/change-password', payload)
+      console.log('[useUsers] Password changed:', res.data)
+      showSnackbar('Password changed successfully')
+      return res.data
+    } catch (err) {
+      error.value =
+        err.response?.data?.error || err.response?.data?.message || 'Failed to change password'
+      console.error('[useUsers] Change password error:', err)
+      showSnackbar(error.value, 'error')
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     users,
     roles,
@@ -116,5 +136,6 @@ export function useUsers() {
     createUser,
     updateUser,
     deleteUser,
+    changePassword,
   }
 }

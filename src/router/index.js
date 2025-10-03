@@ -10,6 +10,7 @@ import AddProject from '@/views/Project/component/AddProject.vue'
 import EditProject from '@/views/Project/component/EditProject.vue'
 import ReportView from '@/views/Report/ReportView.vue'
 import ViewProject from '@/views/Project/component/ViewProject.vue'
+import SettingsView from '@/views/User-settings/SettingsView.vue'
 
 const routes = [
   {
@@ -36,7 +37,12 @@ const routes = [
         component: EditProject,
         props: true,
       },
-      { path: 'projects/view/:id', name: 'projects-view', component: ViewProject, props: true },
+      {
+        path: 'projects/view/:id',
+        name: 'admin-projects-view',
+        component: ViewProject,
+        props: true,
+      },
 
       { path: 'users', name: 'users', component: UsersList },
       { path: 'users/add', name: 'users-add', component: AddUser },
@@ -57,7 +63,9 @@ const routes = [
     children: [
       { path: 'dashboard', name: 'user-dashboard', component: Dashboard },
       { path: 'projects', name: 'user-projects', component: ProjectView },
+      { path: 'projects/view:id', name: 'user-projects-view', component: ViewProject, props: true },
       { path: 'reports', name: 'user-reports', component: ReportView },
+      { path: 'settings', name: 'user-settings', component: SettingsView },
     ],
   },
 ]

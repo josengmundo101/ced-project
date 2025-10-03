@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useAuth } from '../composable/useAuth'
 import ConfirmDialog from '../UI/ConfirmDialog.vue'
 import router from '@/router'
@@ -10,28 +10,18 @@ onMounted(() => {
   fetchCurrentUser()
 })
 
+const props = defineProps({
+  drawer: Boolean,
+  role: { type: Number, default: 2 }, // 1 = admin, 2 = user
+})
+const emit = defineEmits(['update:drawer'])
+
 // --- Logout confirmation ---
 const dialog = ref(false)
 const snackbar = ref({ show: false, message: '', color: 'success' })
 const loading = ref(false)
 
-const props = defineProps({
-  drawer: Boolean,
-  role: { type: Number, default: 2 }, // 1 = admin, 2 = user
-})
-
-const emit = defineEmits(['update:drawer'])
-
-const drawerLocal = ref(props.drawer)
-watch(
-  () => props.drawer,
-  (val) => (drawerLocal.value = val),
-)
-
-const roleMap = {
-  1: 'admin',
-  2: 'user',
-}
+const roleMap = { 1: 'admin', 2: 'user' }
 const roleName = computed(() => roleMap[props.role] || 'guest')
 
 const menuItems = [
@@ -52,16 +42,15 @@ const filteredMenuItems = computed(() => {
       to: `${prefix}/${item.path}`,
     }))
 })
+
 // Handle logout click
 function openLogoutDialog() {
   dialog.value = true
 }
-
 async function confirmLogout() {
   loading.value = true
   try {
     await logout()
-    console.log('✅ Logged out successfully')
     snackbar.value = { show: true, message: 'Logged out successfully', color: 'success' }
     router.push({ path: '/' })
   } catch (err) {
@@ -75,7 +64,11 @@ async function confirmLogout() {
 </script>
 
 <template>
-  <v-navigation-drawer v-model="drawerLocal" @update:modelValue="emit('update:drawer', $event)" app>
+  <v-navigation-drawer
+    v-model="props.drawer"
+    @update:modelValue="emit('update:drawer', $event)"
+    app
+  >
     <!-- User Info -->
     <div class="d-flex align-center pa-5">
       <v-avatar size="40">

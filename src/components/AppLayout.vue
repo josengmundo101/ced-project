@@ -11,8 +11,10 @@ const roleId = computed(() => user?.role_id || 2)
 
 <template>
   <v-app>
-    <AppNavbar @toggle-drawer="drawer = !drawer" />
-    <Sidebar :drawer="drawer" :role="roleId" @update:drawer="drawer = $event" />
+    <!-- both use v-model:drawer -->
+    <AppNavbar v-model:drawer="drawer" />
+    <Sidebar v-model:drawer="drawer" :role="roleId" />
+
     <v-main>
       <router-view />
     </v-main>
