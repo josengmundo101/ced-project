@@ -11,6 +11,7 @@ import EditProject from '@/views/Project/component/EditProject.vue'
 import ReportView from '@/views/Report/ReportView.vue'
 import ViewProject from '@/views/Project/component/ViewProject.vue'
 import SettingsView from '@/views/User-settings/SettingsView.vue'
+import TemporaryNotAvailable from '@/views/AdminSetting/TemporaryNotAvailable.vue'
 
 const routes = [
   {
@@ -51,6 +52,11 @@ const routes = [
         name: 'users-edit',
         component: EditUser,
         props: true,
+      },
+      {
+        path: 'settings',
+        name: 'admin-settings',
+        component: TemporaryNotAvailable,
       },
     ],
   },
