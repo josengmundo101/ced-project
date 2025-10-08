@@ -36,6 +36,4 @@ const clearSearch = () => {
   />
 </template>
 
-<style scoped>
-/* Customize search bar if needed */
-</style>
+<style scoped></style>
