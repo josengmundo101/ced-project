@@ -22,14 +22,17 @@ const props = defineProps({
     default: '',
   },
   role: {
-    type: String,
-    required: true,
+    type: [String, Number],
+    default: () => {
+      const user = JSON.parse(localStorage.getItem('user'))
+      return user?.role_id || 2 // default to user
+    },
   },
 })
 
 // dynamic view route based on role
 const viewPath = (id) => {
-  return props.role === 'admin'
+  return props.role === 1
     ? { name: 'admin-projects-view', params: { id } }
     : { name: 'user-projects-view', params: { id } }
 }

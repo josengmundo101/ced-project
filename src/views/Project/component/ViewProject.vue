@@ -4,10 +4,12 @@ import { useRoute } from 'vue-router'
 import { useProjects } from '@/components/composable/useProject'
 import TableLoader from '@/components/UI/TableLoader.vue'
 import { useAuth } from '@/components/composable/useAuth'
+import { useFormatters } from '@/components/composable/useFormatter'
 
 const route = useRoute()
 const { getProject, loading, error } = useProjects()
 const { currentUser } = useAuth()
+const { formatCurrency, formatYear, formatDate } = useFormatters()
 const project = ref(null)
 
 // compute back route based on role
@@ -123,22 +125,16 @@ onMounted(async () => {
             <tr>
               <th class="pa-3 text-right">Year Implemented:</th>
               <td class="pa-3">
-                {{
-                  project.year_implemented ? `$${project.year_implemented.toLocaleString()}` : 'N/A'
-                }}
+                {{ formatYear(project.year_implemented) }}
               </td>
             </tr>
             <tr>
               <th class="pa-3 text-right">Amount:</th>
-              <td class="pa-3">
-                {{ project.amount ? `$${project.amount.toLocaleString()}` : 'N/A' }}
-              </td>
+              <td class="pa-3">₱{{ formatCurrency(project.amount) }}</td>
             </tr>
             <tr>
               <th class="pa-3 text-right">Revised Amount:</th>
-              <td class="pa-3">
-                {{ project.revised_amount ? `$${project.revised_amount.toLocaleString()}` : 'N/A' }}
-              </td>
+              <td class="pa-3">₱{{ formatCurrency(project.revised_amount) }}</td>
             </tr>
             <tr>
               <th class="pa-3 text-right">Location:</th>

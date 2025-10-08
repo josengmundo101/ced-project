@@ -90,7 +90,7 @@
             <v-text-field v-model="form.revised_amount" label="Revised Amount" type="number" />
           </v-col>
 
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-text-field v-model="form.location" label="Location" />
           </v-col>
 
@@ -100,30 +100,6 @@
 
           <v-col cols="12" md="6">
             <v-text-field v-model="form.end_date" label="End Date" type="date" />
-          </v-col>
-
-          <v-col cols="12" md="6">
-            <v-file-input
-              label="Project Images"
-              accept="image/*"
-              multiple
-              clearable
-              chips
-              prepend-icon="mdi-image-multiple"
-              :model-value="form.image"
-              @update:model-value="
-                (newFiles) => {
-                  // Merge new + old
-                  const allFiles = [...form.image, ...newFiles]
-
-                  // Deduplicate by name+size
-                  form.image = allFiles.filter(
-                    (file, index, self) =>
-                      index === self.findIndex((f) => f.name === file.name && f.size === file.size),
-                  )
-                }
-              "
-            />
           </v-col>
 
           <v-col cols="12">

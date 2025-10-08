@@ -2,23 +2,46 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import SearchBar from '@/components/SearchBar.vue'
+import SearchBar from '@/components/common/SearchBar.vue'
 import UsersTable from './component/UsersTable.vue'
 import ConfirmDialog from '@/components/UI/ConfirmDialog.vue'
 import { useUsers } from '@/components/composable/useUser'
 import TableLoader from '@/components/UI/TableLoader.vue'
 
+// composable
 const { users, loading, error, fetchUsers, deleteUser } = useUsers()
 
+// state
 const searchQuery = ref('')
 const snackbar = ref({ show: false, message: '', color: 'success' })
 const dialog = ref(false)
 const deleteId = ref(null)
 const deleting = ref(false)
+
 // Fetch users on mount
 onMounted(() => {
   fetchUsers()
 })
+
+// searchQuery for User
+// const filteredUser = computed(() => {
+//   if (!searchQuery.value) return users.value
+
+//   const term = searchQuery.value.toLowerCase().trim()
+
+//   return users.value.filter((user) =>
+//     user.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
+//   )
+// })
+
+// // (Optional) debounce for smoother typing
+// let timeout
+// watch(searchQuery, (val) => {
+//   clearTimeout(timeout)
+//   timeout = setTimeout(() => {
+//     searchQuery.value = val.trim()
+//   }, 200)
+// })
 
 // Handle delete (open dialog)
 const handleDelete = (id) => {
@@ -49,14 +72,6 @@ const confirmDelete = async () => {
     deleteId.value = null
   }
 }
-
-// Filter users based on search query
-// const filteredUsers = computed(() => {
-//   if (!searchQuery.value) return users.value
-//   return users.value.filter((user) =>
-//     user.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
-//   )
-// })
 </script>
 
 <template>

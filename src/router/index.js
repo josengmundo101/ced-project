@@ -69,7 +69,12 @@ const routes = [
     children: [
       { path: 'dashboard', name: 'user-dashboard', component: Dashboard },
       { path: 'projects', name: 'user-projects', component: ProjectView },
-      { path: 'projects/view:id', name: 'user-projects-view', component: ViewProject, props: true },
+      {
+        path: 'projects/view/:id',
+        name: 'user-projects-view',
+        component: ViewProject,
+        props: true,
+      },
       { path: 'reports', name: 'user-reports', component: ReportView },
       { path: 'settings', name: 'user-settings', component: SettingsView },
     ],
