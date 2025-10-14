@@ -13,11 +13,18 @@ const { formatCurrency, formatYear, formatDate } = useFormatters()
 const project = ref(null)
 const showDocModal = ref(false)
 const selectedDoc = ref(null)
+const isAdmin = computed(() => currentUser.value?.role_id === 1)
 
 // Document preview state
 const openDocument = (url) => {
   selectedDoc.value = url
   showDocModal.value = true
+
+  // Wait a tick to ensure the modal has rendered, then focus the iframe (optional)
+  setTimeout(() => {
+    const iframe = document.querySelector('#doc-frame')
+    if (iframe) iframe.focus()
+  }, 200)
 }
 
 // compute back route based on role
@@ -168,11 +175,11 @@ onMounted(async () => {
               </td>
             </tr>
 
-            <!-- Documents -->
-            <tr>
+            <!-- Documents (Visible only to Admin) -->
+            <tr v-if="isAdmin">
               <th class="pa-3 text-right align-top">Documents:</th>
               <td class="pa-3">
-                <div v-if="project.document_urls && project.document_urls.length">
+                <div v-if="project.document_urls?.length">
                   <div
                     v-for="(doc, i) in project.document_urls"
                     :key="i"
@@ -187,20 +194,22 @@ onMounted(async () => {
                 <span v-else class="text-grey">No Documents</span>
 
                 <!-- Document Preview Modal -->
-                <v-dialog v-model="showDocModal" max-width="800px" persistent>
+                <v-dialog v-model="showDocModal" max-width="900px" persistent>
                   <v-card rounded="lg">
                     <v-card-title class="d-flex justify-space-between align-center">
                       <span class="font-weight-medium">📄 Document Preview</span>
                       <v-btn icon="mdi-close" variant="text" @click="showDocModal = false" />
                     </v-card-title>
 
-                    <v-card-text>
+                    <v-card-text class="pa-0">
                       <iframe
+                        id="doc-frame"
                         v-if="selectedDoc"
                         :src="selectedDoc"
                         width="100%"
-                        height="600px"
+                        height="700px"
                         frameborder="0"
+                        style="border: none"
                       ></iframe>
 
                       <div v-else class="text-center text-grey pa-6">No document selected.</div>
