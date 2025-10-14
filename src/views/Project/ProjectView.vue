@@ -80,7 +80,7 @@ const confirmDelete = async () => {
     <!-- Header -->
     <div class="mt-6 mb-8">
       <h1 class="text-h4 font-weight-bold fade-in delay-50">Project List</h1>
-      <p class="text-body-2 text-grey-darken-1 mt-2 fade-in delay-100">
+      <p class="text-body-2 text-grey-darken-1 mt-2 fade-in delay-50">
         The project list effectively dictates project presentation and provides space to list your
         projects in the most appealing way.
       </p>
