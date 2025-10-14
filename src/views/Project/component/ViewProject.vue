@@ -157,7 +157,7 @@ onMounted(async () => {
             <tr>
               <th class="pa-3 text-right">End Date:</th>
               <td class="pa-3">
-                {{ formatDate(project.end_date) }}
+                {{ project.end_date ? new Date(project.end_date).toLocaleDateString() : 'N/A' }}
               </td>
             </tr>
 

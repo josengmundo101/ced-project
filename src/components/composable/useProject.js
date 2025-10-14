@@ -85,28 +85,27 @@ export function useProjects() {
   const updateProject = async (id, payload) => {
     loading.value = true
     console.log(`[useProjects] Updating project ID: ${id}`, payload)
-    try {
-      let formData = new FormData()
 
+    try {
+      const formData = new FormData()
       for (const key in payload) {
         if (Array.isArray(payload[key])) {
-          payload[key].forEach((file) => {
-            formData.append(`${key}[]`, file)
-          })
-        } else {
+          payload[key].forEach((file) => formData.append(`${key}[]`, file))
+        } else if (payload[key] !== null && payload[key] !== undefined) {
           formData.append(key, payload[key])
         }
-      } // 👈 this was missing before
+      }
 
       const res = await api.post(`/projects/${id}?_method=PUT`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
+
       console.log('[useProjects] Project updated:', res.data)
       showSnackbar('Project updated successfully')
       return res.data
     } catch (err) {
+      console.error('[useProjects] Update error:', err.response?.data || err)
       error.value = err.response?.data?.message || 'Failed to update project'
-      console.error('[useProjects] Update error:', err)
       showSnackbar(error.value, 'error')
       throw err
     } finally {

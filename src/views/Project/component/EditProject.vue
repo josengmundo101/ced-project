@@ -58,14 +58,8 @@ async function updateProject(updatedProject) {
       router.push({ name: 'admin-projects' })
     }, 800)
   } catch (err) {
-    console.error('Update error:', err)
     errors.value = err.response?.data?.errors || {}
-
-    snackbar.value = {
-      show: true,
-      message: 'Failed to update project',
-      color: 'error',
-    }
+    snackbar.value = { show: true, message: 'Failed to update project', color: 'error' }
   } finally {
     loading.value = false
   }

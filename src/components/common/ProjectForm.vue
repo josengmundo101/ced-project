@@ -1,3 +1,68 @@
+<script setup>
+import { ref, computed, watch } from 'vue'
+
+const props = defineProps({
+  modelValue: { type: Object, default: () => ({}) },
+  isEdit: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false },
+  errors: { type: Object, default: () => ({}) },
+})
+
+const emit = defineEmits(['submit'])
+
+// initialize form with arrays for multiple files
+const form = ref({
+  project_id: '',
+  contract_id: '',
+  project_name: '',
+  category: '',
+  region: '',
+  lgu: '',
+  department: '',
+  implementing_office: '',
+  fund_source: '',
+  implementation_type: '',
+  contractor: '',
+  project_engineer: '',
+  year_implemented: null,
+  amount: null,
+  revised_amount: null,
+  location: '',
+  start_date: '',
+  end_date: '',
+  status: 'ongoing',
+  image: [],
+  document: [],
+  ...props.modelValue,
+})
+
+// Watch for changes when editing (important for async loaded project)
+watch(
+  () => props.modelValue,
+  (newVal) => {
+    if (newVal) {
+      form.value = {
+        ...form.value,
+        ...newVal,
+        image: [],
+        document: [], // reset file inputs
+      }
+    }
+  },
+  { immediate: true },
+)
+
+function handleSubmit() {
+  const payload = { ...form.value }
+
+  // If user didn’t upload new files, remove them from payload
+  if (!payload.image.length) delete payload.image
+  if (!payload.document.length) delete payload.document
+
+  emit('submit', payload)
+}
+</script>
+
 <template>
   <v-responsive class="pa-10">
     <v-card class="pa-6 rounded-lg elevation-2">
@@ -126,7 +191,7 @@
           </v-col>
 
           <v-col cols="12">
-            <v-btn type="submit" color="primary" variant="tonal" rounded>
+            <v-btn type="submit" color="primary" variant="tonal" :loading="loading" rounded>
               {{ isEdit ? 'Update Project' : 'Add Project' }}
             </v-btn>
           </v-col>
@@ -135,61 +200,3 @@
     </v-card>
   </v-responsive>
 </template>
-
-<script setup>
-import { ref, computed, watch } from 'vue'
-
-const props = defineProps({
-  modelValue: { type: Object, default: () => ({}) },
-  isEdit: { type: Boolean, default: false },
-  loading: { type: Boolean, default: false },
-  errors: { type: Object, default: () => ({}) },
-})
-
-const emit = defineEmits(['submit'])
-
-// initialize form with arrays for multiple files
-const form = ref({
-  project_id: '',
-  contract_id: '',
-  project_name: '',
-  category: '',
-  region: '',
-  lgu: '',
-  department: '',
-  implementing_office: '',
-  fund_source: '',
-  implementation_type: '',
-  contractor: '',
-  project_engineer: '',
-  year_implemented: null,
-  amount: null,
-  revised_amount: null,
-  location: '',
-  start_date: '',
-  end_date: '',
-  status: 'ongoing',
-  image: [],
-  document: [],
-  ...props.modelValue,
-})
-
-// Watch for changes when editing (important for async loaded project)
-watch(
-  () => props.modelValue,
-  (newVal) => {
-    form.value = {
-      image: [],
-      document: [],
-      ...newVal,
-    }
-  },
-  { immediate: true },
-)
-
-const isEdit = computed(() => props.mode === 'edit')
-
-function handleSubmit() {
-  emit('submit', form.value)
-}
-</script>
