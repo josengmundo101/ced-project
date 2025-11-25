@@ -2,10 +2,17 @@
 export function useFormatters() {
   const formatCurrency = (value) => {
     if (value == null || value === '') return 'N/A'
-    return value.toLocaleString('en-PH', {
-      style: 'currency',
-      currency: 'PHP',
-    })
+
+    const num = Number(value)
+    if (isNaN(num)) return 'N/A'
+
+    return (
+      '₱' +
+      num.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    )
   }
 
   const formatYear = (value) => {

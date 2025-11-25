@@ -1,15 +1,15 @@
 <template>
   <v-responsive>
-    <TableLoader :loading="loading" :rows="6" />
-    <ProjectForm
-      v-if="project"
-      :modelValue="project"
-      :isEdit="true"
-      :loading="loading"
-      :errors="errors"
-      @submit="updateProject"
-    />
-
+    <TableLoader :loading="loading" :rows="6">
+      <ProjectForm
+        v-if="project"
+        :modelValue="project"
+        :isEdit="true"
+        :loading="loading"
+        :errors="errors"
+        @submit="updateProject"
+      />
+    </TableLoader>
     <!-- Snackbar -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" timeout="3000">
       {{ snackbar.message }}

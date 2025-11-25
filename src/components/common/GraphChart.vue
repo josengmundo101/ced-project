@@ -15,7 +15,7 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement)
 const props = defineProps({
   stats: {
     type: Object,
-    default: () => ({ ongoing: 0, completed: 0, terminated: 0 }),
+    default: () => ({ ongoing: 0, completed: 0, terminated: 0, suspended: 0 }),
   },
   loading: {
     type: Boolean,
@@ -25,15 +25,20 @@ const props = defineProps({
 
 // Chart Data
 const chartData = computed(() => {
-  const values = [props.stats.ongoing, props.stats.completed, props.stats.terminated]
+  const values = [
+    props.stats.ongoing,
+    props.stats.completed,
+    props.stats.terminated,
+    props.stats.suspended,
+  ]
   const total = values.reduce((a, b) => a + b, 0)
 
   return {
-    labels: ['Ongoing', 'Completed', 'Suspended'],
+    labels: ['Ongoing', 'Completed', 'Terminated', 'Suspended'],
     datasets: [
       {
         data: values,
-        backgroundColor: ['#42A5F5', '#66BB6A', '#EF5350'],
+        backgroundColor: ['#42A5F5', '#66BB6A', '#EF5350', '#FFA726'],
         borderColor: '#fff',
         borderWidth: 2,
       },

@@ -52,6 +52,7 @@ const statusColors = {
   completed: 'green',
   ongoing: 'blue',
   terminated: 'red',
+  suspended: 'orange',
 }
 
 // Emit for parent actions
@@ -115,7 +116,7 @@ const emit = defineEmits(['view-project'])
 
 <style scoped>
 .table-scroll {
-  max-height: 300px;
+  max-height: 230px;
   overflow-y: auto;
 }
 

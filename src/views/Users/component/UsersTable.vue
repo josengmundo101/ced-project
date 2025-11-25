@@ -53,7 +53,7 @@ defineProps({
 
 <style scoped>
 .table-scroll {
-  max-height: 500px; /* adjust based on your layout */
+  max-height: 53vh; /* adjust based on your layout */
   overflow-y: auto;
 }
 

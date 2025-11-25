@@ -31,6 +31,7 @@ const form = ref({
   start_date: '',
   end_date: '',
   status: 'ongoing',
+  remarks: '', // <— ADD THIS
   image: [],
   document: [],
   ...props.modelValue,
@@ -40,12 +41,12 @@ const form = ref({
 watch(
   () => props.modelValue,
   (newVal) => {
-    if (newVal) {
+    if (props.isEdit && newVal) {
       form.value = {
         ...form.value,
         ...newVal,
         image: [],
-        document: [], // reset file inputs
+        document: [],
       }
     }
   },
@@ -55,7 +56,10 @@ watch(
 function handleSubmit() {
   const payload = { ...form.value }
 
-  // If user didn’t upload new files, remove them from payload
+  if (payload.status !== 'suspended') {
+    payload.remarks = null
+  }
+
   if (!payload.image.length) delete payload.image
   if (!payload.document.length) delete payload.document
 
@@ -98,11 +102,21 @@ function handleSubmit() {
             <v-text-field v-model="form.category" label="Category" />
           </v-col>
 
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-select
               v-model="form.status"
-              :items="['ongoing', 'completed', 'terminated']"
+              :items="['ongoing', 'completed', 'terminated', 'suspended']"
               label="Status"
+              required
+            />
+          </v-col>
+
+          <v-col cols="12" v-if="form.status === 'suspended'">
+            <v-textarea
+              v-model="form.remarks"
+              label="Reason for Suspension"
+              auto-grow
+              rows="3"
               required
             />
           </v-col>
@@ -155,7 +169,7 @@ function handleSubmit() {
             <v-text-field v-model="form.revised_amount" label="Revised Amount" type="number" />
           </v-col>
 
-          <v-col cols="12">
+          <v-col cols="12" md="6">
             <v-text-field v-model="form.location" label="Location" />
           </v-col>
 

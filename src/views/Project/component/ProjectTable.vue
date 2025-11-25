@@ -17,7 +17,10 @@
             <tr v-for="project in items" :key="project.id">
               <td class="pa-5 text-center">{{ project.contract_id }}</td>
               <td class="pa-5 text-center">{{ project.category }}</td>
-              <td class="pa-5 text-center">{{ project.project_name }}</td>
+              <td class="pa-5 text-center truncate-text">
+                {{ project.project_name }}
+              </td>
+
               <td class="pa-5 text-center">{{ project.location }}</td>
               <td class="pa-5 text-center">
                 <v-chip
@@ -26,7 +29,9 @@
                       ? 'green'
                       : project.status === 'ongoing'
                         ? 'blue'
-                        : 'red'
+                        : project.status == 'terminated'
+                          ? 'red'
+                          : 'orange'
                   "
                 >
                   {{ project.status }}
@@ -86,3 +91,37 @@ const viewPath = (id) => {
     : { name: 'user-projects-view', params: { id } }
 }
 </script>
+
+<style scoped>
+.truncate-text {
+  max-width: 200px;
+  white-space: wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.table-scroll {
+  max-height: 53vh;
+  overflow-y: auto;
+}
+
+.custom-table {
+  background-color: transparent;
+}
+
+.custom-table thead {
+  background-color: rgba(46, 46, 46, 0.05);
+}
+
+.custom-table th {
+  text-transform: uppercase;
+  font-weight: 900;
+  color: #151515;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.custom-table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+</style>

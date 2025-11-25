@@ -5,6 +5,7 @@ import { useProjects } from '@/components/composable/useProject'
 import TableLoader from '@/components/UI/TableLoader.vue'
 import { useAuth } from '@/components/composable/useAuth'
 import { useFormatters } from '@/components/composable/useFormatter'
+import ProjectTimeLineChart from './ProjectTimeLineChart.vue'
 
 const route = useRoute()
 const { getProject, loading, error } = useProjects()
@@ -66,7 +67,7 @@ onMounted(async () => {
     <!-- Details -->
     <v-card v-if="project" class="rounded-lg elevation-2" flat color="transparent">
       <div class="table-scroll">
-        <v-table class="custom-table" density="comfortable">
+        <v-table class="custom-table striped-table" density="comfortable">
           <tbody>
             <tr>
               <th class="pa-3 text-right">Project ID:</th>
@@ -78,7 +79,7 @@ onMounted(async () => {
             </tr>
             <tr>
               <th class="pa-3 text-right">Project Name:</th>
-              <td class="pa-3">{{ project.project_name }}</td>
+              <td class="pa-3 text-left">{{ project.project_name }}</td>
             </tr>
             <tr>
               <th class="pa-3 text-right">Category:</th>
@@ -93,13 +94,23 @@ onMounted(async () => {
                       ? 'green'
                       : project.status === 'ongoing'
                         ? 'blue'
-                        : 'red'
+                        : project.status === 'terminated'
+                          ? 'red'
+                          : 'orange'
                   "
                   text-color="white"
                   size="small"
                 >
                   {{ project.status }}
                 </v-chip>
+              </td>
+            </tr>
+
+            <tr>
+              <th class="pa-3 text-right align-top">Remarks:</th>
+              <td class="pa-3 text-left">
+                <div v-if="project.remarks">{{ project.remarks }}</div>
+                <span v-else class="text-grey">No Remarks</span>
               </td>
             </tr>
 
@@ -122,7 +133,7 @@ onMounted(async () => {
             <tr>
               <th class="pa-3 text-right">Fund Source:</th>
               <td class="pa-3">
-                {{ project.fund_source ? `$${project.fund_source.toLocaleString()}` : 'N/A' }}
+                {{ project.fund_source ? `${project.fund_source.toLocaleString()}` : 'N/A' }}
               </td>
             </tr>
             <tr>
@@ -145,11 +156,11 @@ onMounted(async () => {
             </tr>
             <tr>
               <th class="pa-3 text-right">Amount:</th>
-              <td class="pa-3">₱{{ formatCurrency(project.amount) }}</td>
+              <td class="pa-3">{{ formatCurrency(project.amount) }}</td>
             </tr>
             <tr>
               <th class="pa-3 text-right">Revised Amount:</th>
-              <td class="pa-3">₱{{ formatCurrency(project.revised_amount) }}</td>
+              <td class="pa-3">{{ formatCurrency(project.revised_amount) }}</td>
             </tr>
             <tr>
               <th class="pa-3 text-right">Location:</th>
@@ -222,6 +233,9 @@ onMounted(async () => {
         </v-table>
       </div>
     </v-card>
+
+    <ProjectTimeLineChart v-if="project" :project="project" class="mt-10" />
+
     <RouterLink :to="viewPath">
       <v-btn text color="primary" class="mt-4">Back </v-btn>
     </RouterLink>
@@ -235,14 +249,38 @@ onMounted(async () => {
 }
 
 .custom-table th {
+  /* Slightly darker, more prominent background for attribute labels */
+  background-color: #f5f5f5;
   color: #151515;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  /* Increased font weight for the labels/headers */
+  font-weight: 700;
   white-space: nowrap;
-  font-weight: 600;
+  /* Adjust padding for a more spacious, formal look */
+  padding: 10px 15px !important;
+  vertical-align: middle; /* Ensure text aligns nicely */
+  width: 30%; /* Give labels a defined width */
 }
 
 .custom-table td {
-  font-size: 0.9rem;
+  font-size: 0.95rem; /* Slightly larger text */
   vertical-align: middle;
+  padding: 10px 15px !important; /* Match padding in <th> */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Lighter border for data rows */
+}
+
+/* Zebra Striping for formal, professional look */
+.striped-table tbody tr:nth-child(odd) {
+  background-color: #ffffff; /* White background for odd rows */
+}
+.striped-table tbody tr:nth-child(even) {
+  /* Very light grey for a subtle stripe effect on even rows */
+  background-color: #fafafa;
+}
+
+/* Ensure the last row has no bottom border if the table is borderless */
+.custom-table tbody tr:last-child td,
+.custom-table tbody tr:last-child th {
+  border-bottom: none;
 }
 </style>

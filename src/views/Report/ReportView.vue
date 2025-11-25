@@ -39,8 +39,9 @@ const projectStats = computed(() => {
   const completed = filteredProjects.value.filter((p) => p.status === 'completed').length
   const ongoing = filteredProjects.value.filter((p) => p.status === 'ongoing').length
   const terminated = filteredProjects.value.filter((p) => p.status === 'terminated').length
+  const suspended = filteredProjects.value.filter((p) => p.status === 'suspended').length
 
-  return { completed, ongoing, terminated }
+  return { completed, ongoing, terminated, suspended }
 })
 
 // handle filter bar actions
@@ -73,7 +74,7 @@ const resetFilters = () => {
     />
 
     <v-row>
-      <v-col cols="12" md="3" class="mt-6">
+      <v-col cols="12" md="4" class="mt-6">
         <TableLoader :loading="loading" :rows="2">
           <CardBox
             class="pa-2"
@@ -85,7 +86,7 @@ const resetFilters = () => {
           />
         </TableLoader>
       </v-col>
-      <v-col cols="12" md="3" class="mt-6">
+      <v-col cols="12" md="4" class="mt-6">
         <TableLoader :loading="loading" :rows="2">
           <CardBox
             class="pa-2"
@@ -97,7 +98,7 @@ const resetFilters = () => {
           />
         </TableLoader>
       </v-col>
-      <v-col cols="12" md="3" class="mt-6">
+      <v-col cols="12" md="4" class="mt-6">
         <TableLoader :loading="loading" :rows="2">
           <CardBox
             class="pa-2"
@@ -109,15 +110,29 @@ const resetFilters = () => {
           />
         </TableLoader>
       </v-col>
-      <v-col cols="12" md="3" class="mt-6">
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="6" class="mt-6">
         <TableLoader :loading="loading" :rows="2">
           <CardBox
             class="pa-2"
             flat
-            icon="mdi-cancel"
+            icon="mdi-close-circle"
             iconColor="red"
             :count="projectStats.terminated"
             description="Total Terminated Project"
+          />
+        </TableLoader>
+      </v-col>
+      <v-col cols="12" md="6" class="mt-6">
+        <TableLoader :loading="loading" :rows="2">
+          <CardBox
+            class="pa-2"
+            flat
+            icon="mdi-alert-circle"
+            iconColor="orange"
+            :count="projectStats.suspended"
+            description="Total Suspended Project"
           />
         </TableLoader>
       </v-col>
