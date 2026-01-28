@@ -5,10 +5,13 @@ import { useProjects } from '@/components/composable/useProject'
 import TableLoader from '@/components/UI/TableLoader.vue'
 import { useAuth } from '@/components/composable/useAuth'
 import { useFormatters } from '@/components/composable/useFormatter'
+import { useProjectDocuments } from '@/components/composable/useProjectDocument'
 import ProjectTimeLineChart from './ProjectTimeLineChart.vue'
+import ProjectDocument from './ProjectDocument.vue'
 
 const route = useRoute()
 const { getProject, loading, error } = useProjects()
+const { fetchDocuments, documents, uploadDocument, deleteDocument } = useProjectDocuments()
 const { currentUser } = useAuth()
 const { formatCurrency, formatYear, formatDate } = useFormatters()
 const project = ref(null)
@@ -185,56 +188,19 @@ onMounted(async () => {
                 {{ project.creator?.name || 'N/A' }}
               </td>
             </tr>
-
-            <!-- Documents (Visible only to Admin) -->
-            <tr v-if="isAdmin">
-              <th class="pa-3 text-right align-top">Documents:</th>
-              <td class="pa-3">
-                <div v-if="project.document_urls?.length">
-                  <div
-                    v-for="(doc, i) in project.document_urls"
-                    :key="i"
-                    class="d-flex align-center mb-2"
-                  >
-                    <v-icon color="red" icon="mdi-file-pdf-box" size="28" class="mr-2" />
-                    <v-btn size="small" color="primary" variant="text" @click="openDocument(doc)">
-                      View Document {{ i + 1 }}
-                    </v-btn>
-                  </div>
-                </div>
-                <span v-else class="text-grey">No Documents</span>
-
-                <!-- Document Preview Modal -->
-                <v-dialog v-model="showDocModal" max-width="900px" persistent>
-                  <v-card rounded="lg">
-                    <v-card-title class="d-flex justify-space-between align-center">
-                      <span class="font-weight-medium">📄 Document Preview</span>
-                      <v-btn icon="mdi-close" variant="text" @click="showDocModal = false" />
-                    </v-card-title>
-
-                    <v-card-text class="pa-0">
-                      <iframe
-                        id="doc-frame"
-                        v-if="selectedDoc"
-                        :src="selectedDoc"
-                        width="100%"
-                        height="700px"
-                        frameborder="0"
-                        style="border: none"
-                      ></iframe>
-
-                      <div v-else class="text-center text-grey pa-6">No document selected.</div>
-                    </v-card-text>
-                  </v-card>
-                </v-dialog>
-              </td>
-            </tr>
           </tbody>
         </v-table>
       </div>
     </v-card>
 
-    <ProjectTimeLineChart v-if="project" :project="project" class="mt-10" />
+    <div class="mt-10">
+      <ProjectDocument :items="documents" :role="role" />
+    </div>
+
+    <div class="mt-10">
+      <h3>Project Time Line</h3>
+      <ProjectTimeLineChart v-if="project" :project="project" class="mt-10" />
+    </div>
 
     <RouterLink :to="viewPath">
       <v-btn text color="primary" class="mt-4">Back </v-btn>

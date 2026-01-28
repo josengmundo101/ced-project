@@ -89,7 +89,7 @@ const confirmDelete = async () => {
     <!-- Search & Add Button -->
     <v-row class="mb-4">
       <v-col cols="12" sm="6">
-        <SearchBar v-model="searchQuery" placeholder="Search by project..." />
+        <!-- <SearchBar v-model="searchQuery" placeholder="Search by project..."> -->
       </v-col>
 
       <v-col cols="12" sm="6" class="d-flex justify-end align-center fade-in">

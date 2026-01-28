@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import 'chartjs-adapter-date-fns'
 
@@ -13,25 +13,28 @@ const props = defineProps({
 })
 
 const chartCanvas = ref(null)
-let chart
+let chart = null
 
 function buildDatasets() {
   const start = new Date(props.project.start_date)
   const expected = new Date(props.project.end_date)
 
-  // FULL BASELINE (always shown)
+  // ✅ FULL BASELINE (same as before)
   const baselineDataset = {
     label: 'Full Project Timeline',
     data: [
-      { x: start, y: 1 },
-      { x: expected, y: 1 },
+      { x: start, y: 0 },
+      { x: expected, y: 0 },
     ],
-    borderColor: 'rgba(150,150,150,0.4)',
-    borderWidth: 12,
+    borderColor: 'rgba(200,200,200,0.7)',
+    borderWidth: 14,
+    borderCapStyle: 'round',
     pointRadius: 0,
   }
 
   let actualDataset
+
+  // ✅ SAME LOGIC — ONLY COLORS/STYLING CHANGED
 
   if (props.project.status === 'completed') {
     const actual = props.project.actual_end_date
@@ -41,11 +44,12 @@ function buildDatasets() {
     actualDataset = {
       label: 'Completed',
       data: [
-        { x: start, y: 1 },
-        { x: actual, y: 1 },
+        { x: start, y: 0 },
+        { x: actual, y: 0 },
       ],
-      borderColor: 'green',
-      borderWidth: 12,
+      borderColor: '#2e7d32',
+      borderWidth: 14,
+      borderCapStyle: 'round',
       pointRadius: 0,
     }
   }
@@ -54,11 +58,12 @@ function buildDatasets() {
     actualDataset = {
       label: 'Ongoing',
       data: [
-        { x: start, y: 1 },
-        { x: new Date(), y: 1 },
+        { x: start, y: 0 },
+        { x: new Date(), y: 0 },
       ],
-      borderColor: 'blue',
-      borderWidth: 12,
+      borderColor: '#1565c0',
+      borderWidth: 14,
+      borderCapStyle: 'round',
       pointRadius: 0,
     }
   }
@@ -67,13 +72,14 @@ function buildDatasets() {
     actualDataset = {
       label: 'Suspended',
       data: [
-        { x: start, y: 1 },
-        { x: new Date(), y: 1 },
+        { x: start, y: 0 },
+        { x: new Date(), y: 0 },
       ],
-      borderColor: 'orange',
-      borderWidth: 12,
+      borderColor: '#ef6c00',
+      borderWidth: 14,
+      borderCapStyle: 'round',
+      borderDash: [8, 6], // 👈 visual hint without logic change
       pointRadius: 0,
-      borderDash: [10, 5],
     }
   }
 
@@ -81,11 +87,12 @@ function buildDatasets() {
     actualDataset = {
       label: 'Terminated',
       data: [
-        { x: start, y: 1 },
-        { x: new Date(), y: 1 },
+        { x: start, y: 0 },
+        { x: new Date(), y: 0 },
       ],
-      borderColor: 'red',
-      borderWidth: 12,
+      borderColor: '#c62828',
+      borderWidth: 14,
+      borderCapStyle: 'round',
       pointRadius: 0,
     }
   }
@@ -102,25 +109,48 @@ function renderChart() {
       datasets: buildDatasets(),
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       indexAxis: 'y',
+
       scales: {
         x: {
           type: 'time',
-          time: { unit: 'month' },
+          time: {
+            unit: 'month',
+          },
+          grid: {
+            color: 'rgba(0,0,0,0.06)',
+          },
         },
         y: {
           display: false,
+          min: -1,
+          max: 1,
         },
       },
-      responsive: true,
+
       plugins: {
-        legend: { position: 'bottom' },
+        legend: {
+          position: 'bottom',
+          labels: {
+            usePointStyle: true,
+            boxWidth: 12,
+          },
+        },
+      },
+
+      elements: {
+        line: {
+          tension: 0,
+        },
       },
     },
   })
 }
 
 onMounted(renderChart)
+
 watch(
   () => props.project,
   () => renderChart(),
@@ -129,5 +159,7 @@ watch(
 </script>
 
 <template>
-  <canvas ref="chartCanvas" height="120"></canvas>
+  <div style="height: 140px">
+    <canvas ref="chartCanvas"></canvas>
+  </div>
 </template>

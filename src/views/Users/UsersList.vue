@@ -86,7 +86,7 @@ const confirmDelete = async () => {
 
     <v-row class="mb-4">
       <v-col cols="12" sm="6">
-        <SearchBar v-model="searchQuery" placeholder="Search by name..." />
+        <!--<SearchBar v-model="searchQuery" placeholder="Search by name..." />-->
       </v-col>
       <v-col cols="12" sm="6" class="d-flex justify-end align-center fade-in">
         <RouterLink :to="{ name: 'users-add' }">
